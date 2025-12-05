@@ -233,7 +233,7 @@ class TodoApp(QMainWindow):
         self.selected_task_index = None
         self.config_dir = Path.home() / ".todoapp"
         self.config_dir.mkdir(exist_ok=True)
-        self.config_file = self.config_dir / "config.json"
+        self.config_file = self.config_dir / "Tasks.json"
         self.init_ui()
         self.authenticate()
         self.last_activity = time.time()
@@ -274,6 +274,13 @@ class TodoApp(QMainWindow):
         self.lock_btn = QPushButton("🔒 Lock")
         self.lock_btn.clicked.connect(self.lock_app)
         controls_layout.addWidget(self.lock_btn)
+        controls_layout.addStretch()
+        self.search_label = QLabel("🔍 Search Tasks:")
+        controls_layout.addWidget(self.search_label)
+        self.search_box = QLineEdit()
+        self.search_box.setFixedWidth(250)
+        self.search_box.returnPressed.connect(self.perform_search)
+        controls_layout.addWidget(self.search_box)
         layout.addLayout(controls_layout)
         self.tabs = QTabWidget()
         self.active_table = QTableWidget()
@@ -323,28 +330,21 @@ class TodoApp(QMainWindow):
         self.lock_overlay.setStyleSheet("background-color: white;")
         self.lock_overlay.setGeometry(self.rect())
         self.lock_overlay.hide()
-    
     def eventFilter(self, obj, event):
         if event.type() in (QEvent.MouseMove, QEvent.MouseButtonPress, QEvent.KeyPress, QEvent.Wheel):
             self.last_activity = time.time()
         return False
-
     def check_idle(self):
         if time.time() - self.last_activity >= 600:
             self.trigger_lock()
-
     def trigger_lock(self):
-
         self.lock_overlay.show()
         dlg = PasswordLoginDialog(self)
         dlg.installEventFilter(self)
         for w in dlg.findChildren(QWidget):
             w.installEventFilter(self)
-
         dlg.installEventFilter(self)
-
         for w in dlg.findChildren(QWidget):
-
             w.installEventFilter(self)
         while True:
             if dlg.exec_() != QDialog.Accepted:
@@ -356,12 +356,10 @@ class TodoApp(QMainWindow):
             dlg.password_input.clear()
         self.lock_overlay.hide()
         self.last_activity = time.time()
-
     def resizeEvent(self, event):
         super().resizeEvent(event)
         if hasattr(self, 'lock_overlay'):
             self.lock_overlay.setGeometry(self.rect())
-
     def on_active_header_clicked(self, idx):
         if idx == 2:
             order = ['High', 'Medium', 'Low', 'Unassigned']
@@ -398,11 +396,8 @@ class TodoApp(QMainWindow):
             dialog.installEventFilter(self)
             for w in dialog.findChildren(QWidget):
                 w.installEventFilter(self)
-
             dialog.installEventFilter(self)
-
             for w in dialog.findChildren(QWidget):
-
                 w.installEventFilter(self)
             while True:
                 if dialog.exec_() != QDialog.Accepted:
@@ -420,11 +415,8 @@ class TodoApp(QMainWindow):
             dialog.installEventFilter(self)
             for w in dialog.findChildren(QWidget):
                 w.installEventFilter(self)
-
             dialog.installEventFilter(self)
-
             for w in dialog.findChildren(QWidget):
-
                 w.installEventFilter(self)
             if dialog.exec_() != QDialog.Accepted:
                 sys.exit()
@@ -472,11 +464,8 @@ class TodoApp(QMainWindow):
         dialog.installEventFilter(self)
         for w in dialog.findChildren(QWidget):
             w.installEventFilter(self)
-
         dialog.installEventFilter(self)
-
         for w in dialog.findChildren(QWidget):
-
             w.installEventFilter(self)
         if dialog.exec_() == QDialog.Accepted:
             task_data = dialog.get_task_data()
@@ -577,6 +566,19 @@ class TodoApp(QMainWindow):
                 self.tasks.pop(idx)
             self.refresh_tables()
     def get_task_index_from_row(self, row, table_type):
+        table = None
+        if table_type == 'active':
+            table = self.active_table
+        elif table_type == 'completed':
+            table = self.completed_table
+        elif table_type == 'archived':
+            table = self.archived_table
+        if table is not None:
+            item = table.item(row, 1)
+            if item is not None:
+                idxdata = item.data(Qt.UserRole)
+                if isinstance(idxdata, int):
+                    return idxdata
         task_count = 0
         for idx, task in enumerate(self.tasks):
             status = task.get('status')
@@ -644,7 +646,9 @@ class TodoApp(QMainWindow):
         box_layout.addStretch()
         self.active_table.setCellWidget(row, 0, checkbox_container)
         checkbox.stateChanged.connect(lambda s, r=row, t=self.active_table: self.on_checkbox_state_changed(s, r, t))
-        self.active_table.setItem(row, 1, QTableWidgetItem(task.get('task','')))
+        item_task = QTableWidgetItem(task.get('task',''))
+        item_task.setData(Qt.UserRole, idx)
+        self.active_table.setItem(row, 1, item_task)
         priority_item = QTableWidgetItem(task.get('priority',''))
         pmap = {'Low': QColor(139,195,74),'Medium': QColor(255,152,0),'High': QColor(244,67,54),'Unassigned': QColor(158,158,158)}
         if task.get('priority') in pmap:
@@ -662,7 +666,6 @@ class TodoApp(QMainWindow):
         ddisp = f"{task.get('duration')}d" if task.get('duration') else ''
         self.active_table.setItem(row, 6, QTableWidgetItem(ddisp))
         self.active_table.setItem(row, 7, QTableWidgetItem(task.get('endDate','')))
-
         percent_bar = QProgressBar()
         percent_bar.setMinimum(0)
         percent_bar.setMaximum(100)
@@ -697,7 +700,9 @@ class TodoApp(QMainWindow):
         box_layout.addStretch()
         self.completed_table.setCellWidget(row, 0, checkbox_container)
         checkbox.stateChanged.connect(lambda s, r=row, t=self.completed_table: self.on_checkbox_state_changed(s, r, t))
-        self.completed_table.setItem(row, 1, QTableWidgetItem(task.get('task','')))
+        item_task = QTableWidgetItem(task.get('task',''))
+        item_task.setData(Qt.UserRole, idx)
+        self.completed_table.setItem(row, 1, item_task)
         priority_item = QTableWidgetItem(task.get('priority',''))
         pmap = {'Low': QColor(139,195,74),'Medium': QColor(255,152,0),'High': QColor(244,67,54),'Unassigned': QColor(158,158,158)}
         if task.get('priority') in pmap:
@@ -706,7 +711,6 @@ class TodoApp(QMainWindow):
         self.completed_table.setItem(row, 2, priority_item)
         self.completed_table.setItem(row, 3, QTableWidgetItem(task.get('notes','')))
         self.completed_table.setItem(row, 4, QTableWidgetItem(task.get('startDate','')))
-
         self.completed_table.setItem(row, 5, QTableWidgetItem(task.get('completedDate','')))
     def add_to_archived_table(self, idx, task):
         row = self.archived_table.rowCount()
@@ -720,7 +724,9 @@ class TodoApp(QMainWindow):
         box_layout.addStretch()
         self.archived_table.setCellWidget(row, 0, checkbox_container)
         checkbox.stateChanged.connect(lambda s, r=row, t=self.archived_table: self.on_checkbox_state_changed(s, r, t))
-        self.archived_table.setItem(row, 1, QTableWidgetItem(task.get('task','')))
+        item_task = QTableWidgetItem(task.get('task',''))
+        item_task.setData(Qt.UserRole, idx)
+        self.archived_table.setItem(row, 1, item_task)
         priority_item = QTableWidgetItem(task.get('priority',''))
         pmap = {'Low': QColor(139,195,74),'Medium': QColor(255,152,0),'High': QColor(244,67,54),'Unassigned': QColor(158,158,158)}
         if task.get('priority') in pmap:
@@ -736,7 +742,6 @@ class TodoApp(QMainWindow):
         ddisp = f"{task.get('duration')}d" if task.get('duration') else ''
         self.archived_table.setItem(row, 6, QTableWidgetItem(ddisp))
         self.archived_table.setItem(row, 7, QTableWidgetItem(task.get('endDate','')))
-
         percent_bar = QProgressBar()
         percent_bar.setMinimum(0)
         percent_bar.setMaximum(100)
@@ -773,19 +778,46 @@ class TodoApp(QMainWindow):
     def lock_app(self):
         self.save_to_storage()
         self.trigger_lock()
+    def perform_search(self):
+        text = self.search_box.text().strip().lower()
+        if not text:
+            self.refresh_tables()
+            return
+        results = []
+        for idx, task in enumerate(self.tasks):
+            for v in task.values():
+                if isinstance(v, (str, int, float)):
+                    if text in str(v).lower():
+                        results.append((idx, task))
+                        break
+        self.active_table.setRowCount(0)
+        self.completed_table.setRowCount(0)
+        self.archived_table.setRowCount(0)
+        a = c = r = 0
+        for idx, task in results:
+            status = task.get('status')
+            if status == 'Completed':
+                self.add_to_completed_table(idx, task)
+                c += 1
+            elif status == 'Archive this task':
+                self.add_to_archived_table(idx, task)
+                r += 1
+            else:
+                self.add_to_active_table(idx, task)
+                a += 1
+        self.tabs.setTabText(0, f"Active ({a})")
+        self.tabs.setTabText(1, f"Completed ({c})")
+        self.tabs.setTabText(2, f"Archived ({r})")
 
 def main():
     import sys, os
     from PyQt5.QtGui import QIcon
     from PyQt5.QtWidgets import QApplication
-
     if hasattr(sys, '_MEIPASS'):
         base_path = sys._MEIPASS
     else:
         base_path = os.path.dirname(os.path.abspath(__file__))
-
     icon_path = os.path.join(base_path, "Todo_app.ico")
-
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon(icon_path))
     window = TodoApp()
