@@ -26,6 +26,7 @@ Fast, beautiful, and designed for busy professionals who care about security and
 - **📦 Single-file EXE:** Packaged for easy portable use on any Windows machine.
 - **🛡️ No Data Sync or Cloud:** Your tasks and details never leave your device.
 - **🕒 Idle Timeout:** Lock the application after 10 minutes of inactivity to protect sensitive data and enhance confidentiality. Unlock to resume your session securely.
+- **🔍 Search Tasks**: You can now search for your tasks. It will display all the tasks matching the search criteria in each tab like active, completed or archive.
 
 ***
 
@@ -101,11 +102,9 @@ If you change your password, existing data is re-encrypted, so only you can acce
 ## ❓ FAQ
 
 - **Q:** Is my data ever sent online?
-- 
-  **A:** Never. All data is local, encrypted, and stored on your device.
+- **A:** Never. All data is local, encrypted, and stored on your device.
 - **Q:** Can I reset my password if forgotten?
-- 
-  **A:** No. To preserve security, only the correct password can unlock your tasks.
+- **A:** No. To preserve security, only the correct password can unlock your tasks.
 
 ***
 
