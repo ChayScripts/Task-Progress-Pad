@@ -444,15 +444,24 @@ class TodoApp(QMainWindow):
             return False
     def autosave(self):
         self.save_to_storage()
+      
     def save_to_storage(self):
         if not self.current_password:
             return
+        safe_ts = datetime.now().strftime('%d-%b-%Y %I.%M %p')
+        backup_file = self.config_dir / f"Tasks Backup {safe_ts}.json"
+        if self.config_file.exists():
+            for f in self.config_dir.glob("Tasks Backup *.json"):
+                f.unlink()
+            self.config_file.rename(backup_file)
         encrypted_data = EncryptionHandler.encrypt(json.dumps(self.tasks), self.current_password)
         config_data = {
             'tasks': encrypted_data,
             'timestamp': datetime.now().isoformat()
         }
         Path(self.config_file).write_text(json.dumps(config_data))
+
+
     def save_updates(self):
         try:
             self.save_to_storage()
