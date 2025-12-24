@@ -1,4 +1,4 @@
-# Secure-ToDo-App
+# Task Progress Pad
 
 **Simple and secure desktop To-Do app to organize and protect all your tasks easily.**
 
@@ -6,7 +6,7 @@
 
 ## 🚀 Overview
 
-Secure ToDo App is a modern, privacy-focused desktop to-do list application built with PyQt5.  
+Task Progress Pad is a modern, privacy-focused desktop to-do list application built with PyQt5.  
 All your tasks are encrypted with your password and stored only on your computer (never in the cloud).  
 Fast, beautiful, and designed for busy professionals who care about security and usability.
 
@@ -27,18 +27,6 @@ Fast, beautiful, and designed for busy professionals who care about security and
 - **🛡️ No Data Sync or Cloud:** Your tasks and details never leave your device.
 - **🕒 Idle Timeout:** Lock the application after 10 minutes of inactivity to protect sensitive data and enhance confidentiality. Unlock to resume your session securely.
 - **🔍 Search Tasks**: You can now search for your tasks. It will display all the tasks matching the search criteria in each tab like active, completed or archive.
-
-***
-
-## 🖼️ Screenshots
-
-<p align = "center"><img src = "https://raw.githubusercontent.com/ChayScripts/Secure-ToDo-App/refs/heads/main/App%20Password%20Setup.png"></p><p align = "center">  
-<b> First Time Setup </b>
-</p>
-
-<p align = "center"><img src = "https://raw.githubusercontent.com/ChayScripts/Secure-ToDo-App/refs/heads/main/Secure%20ToDo%20App.png"></p><p align = "center">  
-<b> Secure ToDo App </b>
-</p>
 
 ***
 
