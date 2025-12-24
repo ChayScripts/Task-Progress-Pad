@@ -27,6 +27,7 @@ Fast, beautiful, and designed for busy professionals who care about security and
 - **🛡️ No Data Sync or Cloud:** Your tasks and details never leave your device.
 - **🕒 Idle Timeout:** Lock the application after 10 minutes of inactivity to protect sensitive data and enhance confidentiality. Unlock to resume your session securely.
 - **🔍 Search Tasks**: You can now search for your tasks. It will display all the tasks matching the search criteria in each tab like active, completed or archive.
+- **Auto Backup**: Automatically backup existing Tasks.json file and rename it as "Tasks Backup date time.json"
 
 ***
 
