@@ -226,7 +226,7 @@ class PasswordLoginDialog(QDialog):
 class TodoApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Todo App")
+        self.setWindowTitle("Task Progress Pad")
         self.setGeometry(50, 50, 1800, 900)
         self.tasks = []
         self.current_password = None
@@ -250,8 +250,8 @@ class TodoApp(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout()
-        header_label = QLabel("Todo App")
-        header_label.setFont(QFont("Arial", 16, QFont.Bold))
+        header_label = QLabel("Task Progress Pad")
+        header_label.setFont(QFont("Arial", 12, QFont.Bold))
         layout.addWidget(header_label)
         self.file_label = QLabel("Storage: Local | Encrypted | Protected")
         layout.addWidget(self.file_label)
