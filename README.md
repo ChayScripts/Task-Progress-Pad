@@ -51,7 +51,7 @@ python app.py
 2. Build the executable:
    ```bash
    # Todo_app.ico file is available in this repository.
-   pyinstaller --onefile --windowed --icon=Todo_app.ico --name "Secure ToDo App" app.py --add-data "Todo_app.ico;."
+   pyinstaller --onefile --windowed --icon=Todo_app.ico --name "Task Progress Pad" app.py --add-data "Todo_app.ico;."
    ```
 3. Find your `.exe` in the `dist/` folder!
 
